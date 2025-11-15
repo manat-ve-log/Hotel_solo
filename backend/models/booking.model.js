@@ -48,12 +48,45 @@ class Booking{
 
     static async getAllBooking(){
         const db = await dbPromise;
-        return await db.all(`SELECT * FROM bookings`)
+        return await db.all(`
+            SELECT 
+                b.booking_people,
+                b.booking_check_in,
+                b.booking_check_out,
+                b.booking_total_price,
+                b.booking_status,
+                b.booking_room_id,
+                r.room_number,
+                r.room_price,
+                b.booking_customer_id,
+                c.name,
+                c.phone,
+                c.email
+            FROM bookings b
+            LEFT JOIN rooms r ON b.booking_room_id = r.id
+            LEFT JOIN customers c ON b.booking_customer_id = c.id`)
     }
 
     static async getBookingById(id){
         const db = await dbPromise;
-        return await db.get(`SELECT * FROM bookings WHERE id = ?`,[id])
+        return await db.get(`
+            SELECT 
+                b.booking_people,
+                b.booking_check_in,
+                b.booking_check_out,
+                b.booking_total_price,
+                b.booking_status,
+                b.booking_room_id,
+                r.room_number,
+                r.room_price,
+                b.booking_customer_id,
+                c.name,
+                c.phone,
+                c.email
+            FROM bookings b
+            LEFT JOIN rooms r ON b.booking_room_id = r.id
+            LEFT JOIN customers c ON b.booking_customer_id = c.id
+            WHERE b.id = ?`,[id])
     }
 
     static async createBooking(booking_people, booking_check_in, booking_check_out, booking_status,booking_room_id, booking_customer_id){

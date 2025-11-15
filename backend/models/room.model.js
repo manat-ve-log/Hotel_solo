@@ -89,7 +89,17 @@ class Room{
     static async getAll(){
         const db = await dbPromise;
         return await db.all(`
-            SELECT * FROM rooms
+            SELECT 
+                r.id,
+                r.room_number,
+                r.room_price,
+                r.room_status_id,
+                s.room_status AS room_status,
+                r.room_type_id,
+                t.room_type AS room_type
+            FROM rooms r
+            LEFT JOIN status s ON r.room_status_id = s.id
+            LEFT JOIN room_types t ON r.room_type_id = t.id
             `)
     }
 
@@ -107,7 +117,19 @@ class Room{
 
     static async getRoomById(id) {
         const db = await dbPromise;
-        return await db.get(`SELECT * FROM rooms WHERE id = ?`, [id]);
+        return await db.get(`
+            SELECT 
+                r.id,
+                r.room_number,
+                r.room_price,
+                r.room_status_id,
+                s.room_status AS room_status,
+                r.room_type_id,
+                t.room_type AS room_type
+            FROM rooms r
+            LEFT JOIN status s ON r.room_status_id = s.id
+            LEFT JOIN room_types t ON r.room_type_id = t.id 
+            WHERE r.id = ?`, [id]);
     }
 
     static async createRoom(room_number, room_price, room_status, room_type){
