@@ -7,7 +7,7 @@ const { Sider } = Layout;
 
 const items = [
   { key: '1', icon: <UserOutlined />, label: 'nav 1', path: '/dashboard'  },
-  { key: '2', icon: <VideoCameraOutlined />, label: 'nav 2', path: '/user'  },
+  { key: '2', icon: <VideoCameraOutlined />, label: 'nav 2', path: '/roomManagement'  },
   { key: '3', icon: <UploadOutlined />, label: 'nav 3' , path: '/user' },
 ];
 

@@ -1,0 +1,46 @@
+.roomManagement_container {
+    width: 100%;
+    height: 100%;
+}
+
+/* Header */
+.roomManagement_Header {
+    width: 100%;
+    height: 50px;
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 15px;
+    font-weight: bold;
+}
+.addRoom{
+    color: rgba(0,0,0,0.7);
+}
+
+.scroll-container {
+  width: 100%;
+  height: 200px;
+  display: flex;
+  gap: 15px;
+  padding: 10px;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  cursor: grab;
+  scrollbar-width: none;
+}
+
+.scroll-container::-webkit-scrollbar {
+  display: none;
+}
+.roomManagement_room {
+    min-width: 200px;
+    height: 100px;
+    background: beige;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 2px 2px 8px rgba(0,0,0,0.15);
+    font-size: 20px;
+}
