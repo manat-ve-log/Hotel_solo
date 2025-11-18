@@ -43,4 +43,14 @@
     justify-content: center;
     box-shadow: 2px 2px 8px rgba(0,0,0,0.15);
     font-size: 20px;
+    position: relative;
 }
+.room_edit{
+    position: absolute;
+    right: 5px;
+    top: 5px;
+    width: 20px;
+    height: 20px;
+}
+
+

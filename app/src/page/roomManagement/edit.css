@@ -1,0 +1,24 @@
+.icon-btn {
+  width: 50px;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: 0.2s;
+  
+}
+
+.icon-btn:hover {
+  background: #e6ffe6; /* hover สีเขียวอ่อน */
+  cursor: pointer;
+}
+
+.icon-check {
+  color: green;
+  font-size: 24px;
+  cursor: pointer;
+}

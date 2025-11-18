@@ -1,13 +1,13 @@
 import { useRef, useState } from 'react';
 import './index.css';
-
-interface RoomInterface {
+import EditRoomById from './editRoom';
+export interface RoomInterface {
   RoomName: string;
   RoomType: string;
   RoomStatus: string;
 }
 
-interface FloorRoom {
+export interface FloorRoom {
   floor: number;
   room: RoomInterface;
 }
@@ -128,6 +128,9 @@ const FloorScroll = ({ floor, rooms, setRoomData, roomData }: FloorScrollProps) 
             className="roomManagement_room"
           >
             {room.RoomName}
+            <div className='room_edit'>
+                <EditRoomById room={{floor:floor, room:room}}/>
+            </div>
           </div>
         ))}
       </div>
