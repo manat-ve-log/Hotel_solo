@@ -17,10 +17,12 @@ const RoomDataTest: FloorRoom[] = [
   { floor: 1, room: { RoomName: "Room 102", RoomType: "Deluxe", RoomStatus: "Available",} },
   { floor: 1, room: { RoomName: "Room 103", RoomType: "Deluxe", RoomStatus: "Available",} },
   { floor: 1, room: { RoomName: "Room 104", RoomType: "Deluxe", RoomStatus: "Available",} },
+  { floor: 1, room: { RoomName: "Room 105", RoomType: "Deluxe", RoomStatus: "Available",} },
   { floor: 2, room: { RoomName: "Room 201", RoomType: "Deluxe", RoomStatus: "Available",} },
   { floor: 2, room: { RoomName: "Room 202", RoomType: "Deluxe", RoomStatus: "Available",} },
   { floor: 2, room: { RoomName: "Room 203", RoomType: "Deluxe", RoomStatus: "Available",} },
   { floor: 2, room: { RoomName: "Room 204", RoomType: "Deluxe", RoomStatus: "Available",} },
+  { floor: 2, room: { RoomName: "Room 205", RoomType: "Deluxe", RoomStatus: "Available",} },
   { floor: 2, room: { RoomName: "Room 205", RoomType: "Deluxe", RoomStatus: "Available",} },
   
 ];
@@ -55,8 +57,8 @@ const FloorScroll = ({ floor, rooms, setRoomData, roomData }: FloorScrollProps) 
     scrollRef.current.style.userSelect = "none";
 
     pos = {
-      left: scrollRef.current.scrollLeft,
-      x: e.clientX,
+      left: scrollRef.current.scrollLeft ,
+      x: e.clientX ,
     };
 
     document.addEventListener("mousemove", mouseMoveHandler);
@@ -66,7 +68,7 @@ const FloorScroll = ({ floor, rooms, setRoomData, roomData }: FloorScrollProps) 
   const mouseMoveHandler = (e: MouseEvent) => {
     if (!scrollRef.current) return;
 
-    const dx = e.clientX - pos.x;
+    const dx = e.clientX - pos.x ;
 
     scrollRef.current.scrollLeft = pos.left - dx;
     applyMomentum(dx);
@@ -83,7 +85,7 @@ const FloorScroll = ({ floor, rooms, setRoomData, roomData }: FloorScrollProps) 
   };
 
   const applyMomentum = (dx: number) => {
-    let lastDx = dx;
+    let lastDx = dx ;
     cancelAnimationFrame(momentumID);
 
     const momentum = () => {
@@ -104,14 +106,16 @@ const FloorScroll = ({ floor, rooms, setRoomData, roomData }: FloorScrollProps) 
         const newRoom: FloorRoom = {floor:floor, room:{RoomName:'room name',RoomType:'',RoomStatus:''}}
         setRoomData((prev) => [...prev, newRoom]);
         alert("add room successfully")
-        // console.log(room)
+        
         console.log(roomData)
     }
 
 
   return (
-    <div style={{ background:'#e0e0e0',padding:'5px',borderRadius:'8px',marginBottom:'10px'}}>
-        <div className="roomManagement_Header" style={{background:'none'}}>
+    <div 
+        className='edit-index'
+        style={{ background:'#e0e0e0',padding:'5px',borderRadius:'8px',marginBottom:'10px'}}>
+        <div className="roomManagement_Header" >
             <h3>ชั้น {floor}</h3>
             <button onClick={()=>{addRooms(floor)}}>
                 +ห้อง

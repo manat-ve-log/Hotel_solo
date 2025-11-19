@@ -26,8 +26,9 @@ const EditRoomById: React.FC<EditRoomProps> = ({ room }) => {
     const [popup, setPopup] = useState<boolean>(false);
 
     return(
-        <div style={{width:"100%",height:'100%',position:'relative'}}>
-            <IoIosSettings  style={{width:'20px',height:'20px'}} onClick={handleClick}/>
+        <div  className="edit-container"
+            style={{width:"100%",height:'100%',position:'relative'}}>
+            <IoIosSettings className="icon-setting" style={{width:'20px',height:'20px',cursor:'pointer'}} onClick={handleClick}/>
             {popup && (
                 <div 
                     style={{
@@ -87,7 +88,7 @@ const EditRoomById: React.FC<EditRoomProps> = ({ room }) => {
                             name="status"
                             rules={[{ required: true, message: "กรุณาเลือก status" }]}
                         >
-                            <Select placeholder="status">
+                            <Select placeholder="status" dropdownStyle={{ zIndex: 99999 }}>
                                 <Select.Option value="available">Available</Select.Option>
                                 <Select.Option value="occupied">Occupied</Select.Option>
                                 <Select.Option value="maintenance">Maintenance</Select.Option>
@@ -100,7 +101,7 @@ const EditRoomById: React.FC<EditRoomProps> = ({ room }) => {
                             rules={[{ required: true, message: "กรุณาเลือก type" }]}
                             
                         >
-                            <Select placeholder="type">
+                            <Select placeholder="type" dropdownStyle={{ zIndex: 99999 }}>
                                 <Select.Option value="standard">Standard</Select.Option>
                                 <Select.Option value="deluxe">Deluxe</Select.Option>
                                 <Select.Option value="suite">Suite</Select.Option>
