@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { IoIosSettings } from "react-icons/io";
 import { type FloorRoom, } from ".";
-import { Form, Input, Select, InputNumber } from "antd";
+import { Form, Input, Select, InputNumber, Row, Col } from "antd";
 import { FaCheck } from "react-icons/fa";
 import './edit.css'
 
@@ -42,7 +42,7 @@ const EditRoomById: React.FC<EditRoomProps> = ({ room }) => {
                         boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
                         zIndex: 9999,
                         width: "380px",
-                        height:'180px'
+                        height:'190px'
                     }}>
                     <div style={{display:'flex',justifyContent:'space-between',alignItems:'center', width:'100%',height:'40px'}}>
                         <div style={{opacity:'0.7',fontSize:'20px',paddingLeft:'15px'}}>Room Information</div>
@@ -56,57 +56,94 @@ const EditRoomById: React.FC<EditRoomProps> = ({ room }) => {
 
                     <Form
                         form={form}
-                        layout="inline"
+                        layout="vertical"
                         initialValues={{
                             floor: room?.floor,
                             roomNumber: room?.room.RoomName,
                             status: room?.room.RoomStatus,
+                            price: room?.room.RoomPrice,
                             type: room?.room.RoomType,
                         }}
                         onFinish={onFinish}
-                        style={{padding: "10px" , gap:'5px'}}
+                        style={{height:"150px", padding: "0 10px" , gap:'1px'}}
                         >
-                        <Form.Item
-                            label="Floor"
-                            name="floor"
-                            rules={[{ required: true, message: "กรุณาใส่ floor" }]}
-                        >
-                            <InputNumber min={1} max={10} placeholder="floor" />
-                        </Form.Item>
+                            <Row gutter={[12, 1]} style={{height:'50%'}}>
+                                <Col span={6}>
+                                    <Form.Item
+                                        label="Floor"
+                                        name="floor"
+                                        rules={[{ required: true, message: "กรุณาใส่ floor" }]}
+                                        
 
-                        <Form.Item
-                            label="Room Number"
-                            name="roomNumber"
-                            rules={[{ required: true, message: "กรุณาใส่ room number" }]}
-                            style={{width:'89%'}}
-                        >
-                            <Input placeholder="roomNumber" style={{width:'100%'}}/>
-                        </Form.Item>
+                                    >
+                                        <InputNumber style={{ width: "100%" }} min={1} max={10} placeholder="floor" controls={false} />
+                                    </Form.Item>
+                                </Col>
 
-                        <Form.Item
-                            label="Status"
-                            name="status"
-                            rules={[{ required: true, message: "กรุณาเลือก status" }]}
-                        >
-                            <Select placeholder="status" dropdownStyle={{ zIndex: 99999 }}>
-                                <Select.Option value="available">Available</Select.Option>
-                                <Select.Option value="occupied">Occupied</Select.Option>
-                                <Select.Option value="maintenance">Maintenance</Select.Option>
-                            </Select>
-                        </Form.Item>
+                                <Col span={12}>
+                                    <Form.Item
+                                        label="Room"
+                                        name="roomNumber"
+                                        rules={[{ required: true, message: "กรุณาใส่ room number" }]}
+                                        
+                                    >
+                                        <Input placeholder="roomNumber" />
+                                    </Form.Item>
 
-                        <Form.Item
-                            label="Type"
-                            name="type"
-                            rules={[{ required: true, message: "กรุณาเลือก type" }]}
-                            
-                        >
-                            <Select placeholder="type" dropdownStyle={{ zIndex: 99999 }}>
-                                <Select.Option value="standard">Standard</Select.Option>
-                                <Select.Option value="deluxe">Deluxe</Select.Option>
-                                <Select.Option value="suite">Suite</Select.Option>
-                            </Select>
-                        </Form.Item>
+                                </Col>
+
+                                <Col span={6}>
+                                    <Form.Item
+                                        label="Price"
+                                        name="price"
+                                        rules={[{ required: true, message: "กรุณาใส่ price" }]}
+                                        
+
+                                    >
+                                        <InputNumber min={0} placeholder="price" controls={false} style={{ width: "100%" }}/>
+
+                                    </Form.Item>
+
+                                </Col>
+                            </Row>
+
+                            <Row gutter={[12,1]} style={{ height:"50%"}}>
+                                <Col span={12}>
+                                    <Form.Item
+                                        label="Status"
+                                        name="status"
+                                        rules={[{ required: true, message: "กรุณาเลือก status" }]}
+                                    >
+                                        <Select placeholder="status" dropdownStyle={{ zIndex: 99999 }}>
+                                            <Select.Option value="available">Available</Select.Option>
+                                            <Select.Option value="occupied">Occupied</Select.Option>
+                                            <Select.Option value="maintenance">Maintenance</Select.Option>
+                                        </Select>
+                                    </Form.Item>
+
+                                
+                                </Col>
+                                <Col span={12}>
+                                    <Form.Item
+                                        label="Type"
+                                        name="type"
+                                        rules={[{ required: true, message: "กรุณาเลือก type" }]}
+                                        
+                                    >
+                                        <Select placeholder="type" dropdownStyle={{ zIndex: 99999 }}>
+                                            <Select.Option value="standard">Standard</Select.Option>
+                                            <Select.Option value="deluxe">Deluxe</Select.Option>
+                                            <Select.Option value="suite">Suite</Select.Option>
+                                        </Select>
+                                    </Form.Item>
+                                
+                                </Col>
+                            </Row>
+                       
+
+                       
+                       
+                       
                     </Form>
                                                 
                 </div>

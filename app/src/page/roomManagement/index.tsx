@@ -1,8 +1,10 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import './index.css';
 import EditRoomById from './editRoom';
+import { RoomService } from '../../service/https/room';
 export interface RoomInterface {
   RoomName: string;
+  RoomPrice:number|any;
   RoomType: string;
   RoomStatus: string;
 }
@@ -13,17 +15,17 @@ export interface FloorRoom {
 }
 
 const RoomDataTest: FloorRoom[] = [
-  { floor: 1, room: { RoomName: "Room 101", RoomType: "Deluxe", RoomStatus: "Available",} },
-  { floor: 1, room: { RoomName: "Room 102", RoomType: "Deluxe", RoomStatus: "Available",} },
-  { floor: 1, room: { RoomName: "Room 103", RoomType: "Deluxe", RoomStatus: "Available",} },
-  { floor: 1, room: { RoomName: "Room 104", RoomType: "Deluxe", RoomStatus: "Available",} },
-  { floor: 1, room: { RoomName: "Room 105", RoomType: "Deluxe", RoomStatus: "Available",} },
-  { floor: 2, room: { RoomName: "Room 201", RoomType: "Deluxe", RoomStatus: "Available",} },
-  { floor: 2, room: { RoomName: "Room 202", RoomType: "Deluxe", RoomStatus: "Available",} },
-  { floor: 2, room: { RoomName: "Room 203", RoomType: "Deluxe", RoomStatus: "Available",} },
-  { floor: 2, room: { RoomName: "Room 204", RoomType: "Deluxe", RoomStatus: "Available",} },
-  { floor: 2, room: { RoomName: "Room 205", RoomType: "Deluxe", RoomStatus: "Available",} },
-  { floor: 2, room: { RoomName: "Room 205", RoomType: "Deluxe", RoomStatus: "Available",} },
+  { floor: 1, room: { RoomName: "Room 101", RoomPrice:0 ,RoomType: "Deluxe", RoomStatus: "Available",} },
+  { floor: 1, room: { RoomName: "Room 102", RoomPrice:0 ,RoomType: "Deluxe", RoomStatus: "Available",} },
+  { floor: 1, room: { RoomName: "Room 103", RoomPrice:0 ,RoomType: "Deluxe", RoomStatus: "Available",} },
+  { floor: 1, room: { RoomName: "Room 104", RoomPrice:0 ,RoomType: "Deluxe", RoomStatus: "Available",} },
+  { floor: 1, room: { RoomName: "Room 105", RoomPrice:0 ,RoomType: "Deluxe", RoomStatus: "Available",} },
+  { floor: 2, room: { RoomName: "Room 201", RoomPrice:0 ,RoomType: "Deluxe", RoomStatus: "Available",} },
+  { floor: 2, room: { RoomName: "Room 202", RoomPrice:0 ,RoomType: "Deluxe", RoomStatus: "Available",} },
+  { floor: 2, room: { RoomName: "Room 203", RoomPrice:0 ,RoomType: "Deluxe", RoomStatus: "Available",} },
+  { floor: 2, room: { RoomName: "Room 204", RoomPrice:0 ,RoomType: "Deluxe", RoomStatus: "Available",} },
+  { floor: 2, room: { RoomName: "Room 205", RoomPrice:0 ,RoomType: "Deluxe", RoomStatus: "Available",} },
+  { floor: 2, room: { RoomName: "Room 205", RoomPrice:0 ,RoomType: "Deluxe", RoomStatus: "Available",} },
   
 ];
 
@@ -103,7 +105,7 @@ const FloorScroll = ({ floor, rooms, setRoomData, roomData }: FloorScrollProps) 
   
 
     const addRooms = (floor:number) => {
-        const newRoom: FloorRoom = {floor:floor, room:{RoomName:'room name',RoomType:'',RoomStatus:''}}
+        const newRoom: FloorRoom = {floor:floor, room:{RoomName:'room name',RoomPrice:200,RoomType:'',RoomStatus:''}}
         setRoomData((prev) => [...prev, newRoom]);
         alert("add room successfully")
         
@@ -145,20 +147,51 @@ const FloorScroll = ({ floor, rooms, setRoomData, roomData }: FloorScrollProps) 
 
 const RoomManagement = () => {
     const [RoomData, setRoomData] = useState<FloorRoom[]>(RoomDataTest)
-  const groupedRooms = groupByFloor(RoomData);
-//   const [roomData, setRoomData] = useState<FloorRoom[]>(RoomData);
-//   const groupedRoomsA = groupByFloor(roomData);
-  
-  const addFloor = () =>{
-    const lastFloor = Math.max(...RoomData.map(r => r.floor)) + 1;
-    const newRoom: FloorRoom = {floor: lastFloor, room: {RoomName: "", RoomType: "", RoomStatus: "",}
+    // const groupedRooms = groupByFloor(RoomData);
+   
+    const [rooms, setRooms] = useState<FloorRoom[]>([]);
+    const groupedRooms = groupByFloor(rooms);
+
+    const fetchRooms = async () => {
+        try {
+            const res = await RoomService.getRooms();
+            console.log("res => ",res)
+            const rooms = res.data.map((r: any) => ({
+                floor: r.floor,
+                room:{
+                    RoomName: r.room_number,
+                    RoomPrice: r.room_price,
+                    RoomStatus: r.room_status,
+                    RoomType: r.room_type
+                }
+               
+            }));
+            console.log('room ex',rooms)
+            setRooms(rooms);
+        } catch (err) {
+            console.error(err);
+        }
+        console.log("room data ",rooms)
+    };
     
-  };
-    alert("add successfully");
-    // setRoomData([...RoomData, newRoom]);
-    setRoomData((prev) => ([...prev, newRoom]))
-    console.log(RoomData)
-  }
+    useEffect(()=>{
+        fetchRooms();
+    },[])
+
+    useEffect(() => {
+        console.log("rooms updated -->", rooms);
+    }, [rooms]);
+  
+    const addFloor = () =>{
+        const lastFloor = Math.max(...rooms.map(r => r.floor)) + 1;
+        const newRoom: FloorRoom = {floor: lastFloor, room: {RoomName: "name",RoomPrice:0, RoomType: "", RoomStatus: "",}
+        
+    };
+        alert("add successfully");
+        // setRoomData([...RoomData, newRoom]);
+        setRoomData((prev) => ([...prev, newRoom]))
+        console.log(RoomData)
+    }
 
   return (
     <div className="roomManagement_container" style={{ padding: 20 }}>
@@ -169,13 +202,13 @@ const RoomManagement = () => {
         </button>
       </div>
 
-      {Object.entries(groupedRooms).map(([floor, rooms]) => (
+      {Object.entries(groupedRooms).map(([floor, r]) => (
         <FloorScroll
           key={floor}
           floor={parseInt(floor)}
-          rooms={rooms}
+          rooms={r}
           setRoomData = {setRoomData}
-          roomData = {RoomData}
+          roomData = {rooms}
         />
       ))}
     </div>

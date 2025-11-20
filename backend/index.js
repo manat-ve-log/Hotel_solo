@@ -8,10 +8,13 @@ import { Room, Status, RoomType } from './models/room.model.js';
 import Booking from './models/booking.model.js';
 import Payment from './models/payment.model.js';
 import cors from "cors";
+import morgan from "morgan";
+
 
 const app = express()
 const port = 3000
 
+app.use(morgan("dev"));
 app.use(express.json()) 
 app.use(cors());
 app.use(router);

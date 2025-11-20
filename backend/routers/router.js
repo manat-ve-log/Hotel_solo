@@ -24,6 +24,9 @@ router.post('/room/create',roomController.createRoom);
 router.put('/room/update',roomController.updateRoom);
 router.delete('/room/:id',roomController.deleteRoomById);
 
+router.get('/room/status',roomController.getStatus);
+router.get('/room/type',roomController.getRoomType);
+
 // ----------------------------------- booking ----------------------------
 router.get('/booking', bookingController.getAllBookings);
 router.get('/booking/:id',bookingController.getBookingById);

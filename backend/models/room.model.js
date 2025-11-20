@@ -77,6 +77,7 @@ class Room{
         await db.run(`
             CREATE TABLE IF NOT EXISTS rooms (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
+                floor INTEGER NOT NULL,
                 room_number TEXT NOT NULL UNIQUE,
                 room_price FLOAT,
                 room_status_id INTEGER NOT NULL,
@@ -91,6 +92,7 @@ class Room{
         return await db.all(`
             SELECT 
                 r.id,
+                r.floor,
                 r.room_number,
                 r.room_price,
                 r.room_status_id,
@@ -109,8 +111,8 @@ class Room{
         const count = await db.get(`SELECT COUNT(*) as total FROM rooms`);
         if (count.total === 0) {
             await db.run(
-                `INSERT INTO rooms (room_number, room_price, room_type_id, room_status_id) VALUES (?, ?, ?, ?)`,
-                ["ABC", 400, 1, 2]
+                `INSERT INTO rooms (floor, room_number, room_price, room_type_id, room_status_id) VALUES (?, ?, ?, ?, ?)`,
+                [1, "ABC", 400, 1, 2]
             );
         }
     }
@@ -120,6 +122,7 @@ class Room{
         return await db.get(`
             SELECT 
                 r.id,
+                r.floor,
                 r.room_number,
                 r.room_price,
                 r.room_status_id,
@@ -132,7 +135,7 @@ class Room{
             WHERE r.id = ?`, [id]);
     }
 
-    static async createRoom(room_number, room_price, room_status, room_type){
+    static async createRoom(floor, room_number, room_price, room_status, room_type){
 
         const db = await dbPromise;
         const statusRow = await db.get(`SELECT id FROM status WHERE room_status = ?`, [room_status]);
@@ -148,12 +151,12 @@ class Room{
 
         console.log("Status ID:", room_status_id, "Type ID:", room_type_id);
         await db.run(`
-            INSERT INTO rooms (room_number, room_price, room_status_id, room_type_id) VALUES (?,?,?,?)
-        `,[room_number,room_price, room_status_id, room_type_id])
+            INSERT INTO rooms (floor,room_number, room_price, room_status_id, room_type_id) VALUES (?,?,?,?,?)
+        `,[floor,room_number,room_price, room_status_id, room_type_id])
     
     }
 
-    static async updateRoom(room_number, room_price, room_status, room_type, id){
+    static async updateRoom(floor, room_number, room_price, room_status, room_type, id){
         const db = await dbPromise;
         
         const room_status_obj = await db.get(
@@ -168,8 +171,8 @@ class Room{
             throw new Error("Invalid room status or room type");
         }
         await db.run(
-            `UPDATE rooms SET room_number = ?,room_price = ?, room_status_id = ?, room_type_id = ? WHERE id = ?`,
-            [room_number, room_price, room_status_obj.id, room_type_obj.id, id]
+            `UPDATE rooms SET floor = ? room_number = ?,room_price = ?, room_status_id = ?, room_type_id = ? WHERE id = ?`,
+            [floor, room_number, room_price, room_status_obj.id, room_type_obj.id, id]
         );
     }
 
