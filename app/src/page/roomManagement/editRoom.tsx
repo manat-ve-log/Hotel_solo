@@ -1,25 +1,74 @@
-import { useState } from "react";
-import { IoIosSettings } from "react-icons/io";
-import { type FloorRoom, } from ".";
+import { useEffect, useState, type CSSProperties } from "react";
+import { type RoomInterface } from ".";
 import { Form, Input, Select, InputNumber, Row, Col } from "antd";
 import { FaCheck } from "react-icons/fa";
 import './edit.css'
+import { RoomService, RoomTypeService, StatusService } from "../../service/https/room";
+import { CiEdit } from "react-icons/ci";
+
+export interface Status {
+  id: number;
+  room_status: string; 
+}
+export interface Type {
+  id: number;
+  room_type: string; 
+}
 
 interface EditRoomProps {
-  room: FloorRoom;  
+    style?:CSSProperties;
+    room: RoomInterface;
 }
 
 const EditRoomById: React.FC<EditRoomProps> = ({ room }) => {
+    const [status, setStatus] = useState<Status[]>([]);
+    const [type, setType] = useState<Type[]>([]);
+
     const [form] = Form.useForm();
     const [pos, setPos] = useState({ x: 0, y: 0 });
+    const fetchStatus = async () => {
+        try{
+        const res = await StatusService.getStatus();
+        console.log("room status --> ",res)
+        if (res){
+            setStatus(res.data.data)
+        }
+        }catch(error){
+        console.error(error);
+        }
+    }
+    const fetchType = async () => {
+        try{
+        const res = await RoomTypeService.getRoomType();
+        if (res){
+            setType(res.data)
+        }
+        }catch(error){
+        console.error(error);
+        }
+    }
+    useEffect(()=>{
+        fetchStatus();
+        fetchType();
+    },[])
 
     const handleClick = (e: React.MouseEvent) => {
         setPos({ x: e.clientX, y: e.clientY });
         setPopup(true);
     };
 
-    const onFinish = (values: any) => {
-        console.log("Submitted values:", values);
+    const onFinish = async(values: any) => {
+        const updataData = {id:room.id, ...values}
+        try{
+            const res = await RoomService.updateRoomById(updataData)
+            if (res){
+                alert("update success")
+                window.location.reload();
+            }
+        }catch(err){
+            console.error(err)
+            alert("error")
+        }
         setPopup(false)
     };
     
@@ -28,7 +77,7 @@ const EditRoomById: React.FC<EditRoomProps> = ({ room }) => {
     return(
         <div  className="edit-container"
             style={{width:"100%",height:'100%',position:'relative'}}>
-            <IoIosSettings className="icon-setting" style={{width:'20px',height:'20px',cursor:'pointer'}} onClick={handleClick}/>
+            <CiEdit className="icon-setting" style={{width:'20px',height:'20px',cursor:'pointer'}} onClick={handleClick}/>
             {popup && (
                 <div 
                     style={{
@@ -59,10 +108,10 @@ const EditRoomById: React.FC<EditRoomProps> = ({ room }) => {
                         layout="vertical"
                         initialValues={{
                             floor: room?.floor,
-                            roomNumber: room?.room.RoomName,
-                            status: room?.room.RoomStatus,
-                            price: room?.room.RoomPrice,
-                            type: room?.room.RoomType,
+                            room_number: room?.RoomName,
+                            room_status: room?.RoomStatus,
+                            room_price: room?.RoomPrice,
+                            room_type: room?.RoomType,
                         }}
                         onFinish={onFinish}
                         style={{height:"150px", padding: "0 10px" , gap:'1px'}}
@@ -83,7 +132,7 @@ const EditRoomById: React.FC<EditRoomProps> = ({ room }) => {
                                 <Col span={12}>
                                     <Form.Item
                                         label="Room"
-                                        name="roomNumber"
+                                        name="room_number"
                                         rules={[{ required: true, message: "กรุณาใส่ room number" }]}
                                         
                                     >
@@ -95,7 +144,7 @@ const EditRoomById: React.FC<EditRoomProps> = ({ room }) => {
                                 <Col span={6}>
                                     <Form.Item
                                         label="Price"
-                                        name="price"
+                                        name="room_price"
                                         rules={[{ required: true, message: "กรุณาใส่ price" }]}
                                         
 
@@ -111,13 +160,17 @@ const EditRoomById: React.FC<EditRoomProps> = ({ room }) => {
                                 <Col span={12}>
                                     <Form.Item
                                         label="Status"
-                                        name="status"
+                                        name="room_status"
                                         rules={[{ required: true, message: "กรุณาเลือก status" }]}
                                     >
                                         <Select placeholder="status" dropdownStyle={{ zIndex: 99999 }}>
-                                            <Select.Option value="available">Available</Select.Option>
-                                            <Select.Option value="occupied">Occupied</Select.Option>
-                                            <Select.Option value="maintenance">Maintenance</Select.Option>
+                                            {status.map((s)=>(
+                                                <Select.Option key={s.id}
+                                                    value={s.room_status}
+                                                >
+                                                    {s.room_status}
+                                                </Select.Option>
+                                            ))}
                                         </Select>
                                     </Form.Item>
 
@@ -126,14 +179,18 @@ const EditRoomById: React.FC<EditRoomProps> = ({ room }) => {
                                 <Col span={12}>
                                     <Form.Item
                                         label="Type"
-                                        name="type"
+                                        name="room_type"
                                         rules={[{ required: true, message: "กรุณาเลือก type" }]}
                                         
                                     >
                                         <Select placeholder="type" dropdownStyle={{ zIndex: 99999 }}>
-                                            <Select.Option value="standard">Standard</Select.Option>
-                                            <Select.Option value="deluxe">Deluxe</Select.Option>
-                                            <Select.Option value="suite">Suite</Select.Option>
+                                            {type.map((t)=>(
+                                                <Select.Option key={t.id}
+                                                    value={t.room_type}
+                                                >
+                                                    {t.room_type}
+                                                </Select.Option>
+                                            ))}
                                         </Select>
                                     </Form.Item>
                                 

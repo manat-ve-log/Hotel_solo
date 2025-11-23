@@ -28,7 +28,7 @@ const roomController = {
     },
 
     createRoom: async (req, res) =>{
-        const {room_number, room_price, room_type, room_status} = req.body;
+        const {floor, room_number, room_price, room_type, room_status} = req.body;
         console.log(room_number, room_price, room_type, room_status);
         try{
             
@@ -41,10 +41,12 @@ const roomController = {
         }
     },
     updateRoom: async (req, res) =>{
-        const {room_number, room_price, room_type, room_status, id} = req.body;
+        const {floor, room_number, room_price, room_type, room_status, id} = req.body;
         const existingRoom = await Room.getRoomById(id);
+        console.log(" update -- existing room RESULT:", existingRoom);
 
         if (!existingRoom) return res.status(404).json({ message: "Room not found" });
+        console.log("room update RESULT:", req.body);
 
         try{
             await Room.updateRoom(floor, room_number, room_price, room_status, room_type, id)
@@ -52,7 +54,7 @@ const roomController = {
         }
         catch (error){
             console.error(error)
-            res.status(500).json({message:"Error update room"})
+            res.status(500).json({message:"Error update room", error:error.message})
 
         }
     },
@@ -69,9 +71,11 @@ const roomController = {
         }
     },
     getStatus:async (req, res) => {
+        console.log("req getStatus")
         try{
             const status = await Status.getAllStatus();
-            return res.status(200).json(status);
+            console.log("STATUS RESULT:", status);
+            res.status(201).json({message:'ok', data:status});
 
         }catch(error){
             console.error(error)

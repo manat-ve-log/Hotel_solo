@@ -2,52 +2,36 @@ import { useEffect, useRef, useState } from 'react';
 import './index.css';
 import EditRoomById from './editRoom';
 import { RoomService } from '../../service/https/room';
+import { IoMdPricetags } from "react-icons/io";
+import { GrStatusGood } from "react-icons/gr";
+import { MdBedroomChild } from "react-icons/md";
+import { LuBedSingle } from "react-icons/lu";
+import { LuBedDouble } from "react-icons/lu";
+
+import { BiSolidBadgeCheck } from "react-icons/bi";
+import { GrVmMaintenance } from "react-icons/gr";
+
 export interface RoomInterface {
+  id?: number;
+  floor: number;
   RoomName: string;
   RoomPrice:number|any;
   RoomType: string;
   RoomStatus: string;
 }
 
-export interface FloorRoom {
-  floor: number;
-  room: RoomInterface;
+
+function randomCode() {
+  const letter = String.fromCharCode(65 + Math.floor(Math.random() * 26));
+  const number = Math.floor(10+Math.random()*90);
+  return `'${letter}${number}'`;
 }
-
-const RoomDataTest: FloorRoom[] = [
-  { floor: 1, room: { RoomName: "Room 101", RoomPrice:0 ,RoomType: "Deluxe", RoomStatus: "Available",} },
-  { floor: 1, room: { RoomName: "Room 102", RoomPrice:0 ,RoomType: "Deluxe", RoomStatus: "Available",} },
-  { floor: 1, room: { RoomName: "Room 103", RoomPrice:0 ,RoomType: "Deluxe", RoomStatus: "Available",} },
-  { floor: 1, room: { RoomName: "Room 104", RoomPrice:0 ,RoomType: "Deluxe", RoomStatus: "Available",} },
-  { floor: 1, room: { RoomName: "Room 105", RoomPrice:0 ,RoomType: "Deluxe", RoomStatus: "Available",} },
-  { floor: 2, room: { RoomName: "Room 201", RoomPrice:0 ,RoomType: "Deluxe", RoomStatus: "Available",} },
-  { floor: 2, room: { RoomName: "Room 202", RoomPrice:0 ,RoomType: "Deluxe", RoomStatus: "Available",} },
-  { floor: 2, room: { RoomName: "Room 203", RoomPrice:0 ,RoomType: "Deluxe", RoomStatus: "Available",} },
-  { floor: 2, room: { RoomName: "Room 204", RoomPrice:0 ,RoomType: "Deluxe", RoomStatus: "Available",} },
-  { floor: 2, room: { RoomName: "Room 205", RoomPrice:0 ,RoomType: "Deluxe", RoomStatus: "Available",} },
-  { floor: 2, room: { RoomName: "Room 205", RoomPrice:0 ,RoomType: "Deluxe", RoomStatus: "Available",} },
-  
-];
-
-
-// ฟังก์ชันจัดกลุ่มตามชั้น floor (ใช้ reduce)
-const groupByFloor = (data: FloorRoom[]) => {
-  return data.reduce((acc, curr) => {
-    if (!acc[curr.floor]) acc[curr.floor] = [];
-    acc[curr.floor].push(curr.room);
-    return acc;
-  }, {} as Record<number, RoomInterface[]>);
-};
 
 interface FloorScrollProps {
-  floor: number;
   rooms: RoomInterface[];
-  roomData: FloorRoom[];
-  setRoomData: React.Dispatch<React.SetStateAction<FloorRoom[]>>;
 }
 
-const FloorScroll = ({ floor, rooms, setRoomData, roomData }: FloorScrollProps) => {
-
+const FloorScroll = ({ rooms }: FloorScrollProps) => {
   const scrollRef = useRef<HTMLDivElement>(null);
   let pos = { left: 0, x: 0 };
   let momentumID: any;
@@ -55,7 +39,7 @@ const FloorScroll = ({ floor, rooms, setRoomData, roomData }: FloorScrollProps) 
   const mouseDownHandler = (e: React.MouseEvent) => {
     if (!scrollRef.current) return;
 
-    scrollRef.current.style.cursor = "grabbing";
+    // scrollRef.current.style.cursor = "grabbing";
     scrollRef.current.style.userSelect = "none";
 
     pos = {
@@ -104,12 +88,27 @@ const FloorScroll = ({ floor, rooms, setRoomData, roomData }: FloorScrollProps) 
   };
   
 
-    const addRooms = (floor:number) => {
-        const newRoom: FloorRoom = {floor:floor, room:{RoomName:'room name',RoomPrice:200,RoomType:'',RoomStatus:''}}
-        setRoomData((prev) => [...prev, newRoom]);
-        alert("add room successfully")
+    const addRooms = async () => {
+
+      try{
+        const res = await RoomService.createRoom(
+          {
+            floor: rooms[0].floor,
+            room_number: randomCode(),
+            room_price: 0,
+            room_type: "Single Room",
+            room_status: "maintenance",
+          }
+        );
+        if (res){
+          alert("add room success")
+          window.location.reload();
+        }
+
+      }catch(err){
+        console.error("ERROR createRoom:", err);
+      }
         
-        console.log(roomData)
     }
 
 
@@ -117,9 +116,10 @@ const FloorScroll = ({ floor, rooms, setRoomData, roomData }: FloorScrollProps) 
     <div 
         className='edit-index'
         style={{ background:'#e0e0e0',padding:'5px',borderRadius:'8px',marginBottom:'10px'}}>
+          
         <div className="roomManagement_Header" >
-            <h3>ชั้น {floor}</h3>
-            <button onClick={()=>{addRooms(floor)}}>
+            <h3>ชั้น {rooms[0].floor}</h3>
+            <button onClick={()=>{addRooms()}}>
                 +ห้อง
             </button>
         </div>
@@ -128,14 +128,47 @@ const FloorScroll = ({ floor, rooms, setRoomData, roomData }: FloorScrollProps) 
         ref={scrollRef}
         onMouseDown={mouseDownHandler}
       >
-        {rooms.map((room) => (
+        {rooms.map(room => (
           <div
-            key={room.RoomName}
+            key={room.id}
             className="roomManagement_room"
           >
-            {room.RoomName}
+            <div className='child c1'>
+              {room.RoomName}
+              <sup>
+                {room.RoomStatus == 'booking' && <div><BiSolidBadgeCheck color='green'size={12}style={{opacity:'0.4',marginLeft:'2px'}}/></div>||
+                  room.RoomStatus == 'maintenance' && <div><GrVmMaintenance color='red'size={12}style={{opacity:'0.4',marginLeft:'2px'}}/></div>
+
+                }
+              </sup>
+              
+            </div>
+            <div className='child c2'>
+              <IoMdPricetags />
+              {room.RoomPrice}
+            </div>
+            <div className='child c3'>
+              <GrStatusGood/>
+              {room.RoomStatus}
+            </div>
+            <div className='child c4'>
+              <MdBedroomChild/>
+              {room.RoomType}
+            </div>
+            <div className='c5'>
+              <div className='c5-icon'>
+                {
+                  room.RoomType == "Single Room" && <LuBedSingle/> ||
+                  room.RoomType == "Twin Room" && <LuBedDouble/> ||
+                  room.RoomType == "Triple Room" && <div><LuBedDouble/><LuBedSingle/></div> ||
+                  room.RoomType == "Quad Room" && <div><LuBedDouble/><LuBedDouble/></div>||
+                  <LuBedSingle/>
+                }
+              </div>
+            
+            </div>
             <div className='room_edit'>
-                <EditRoomById room={{floor:floor, room:room}}/>
+                <EditRoomById room={room}/>
             </div>
           </div>
         ))}
@@ -146,52 +179,59 @@ const FloorScroll = ({ floor, rooms, setRoomData, roomData }: FloorScrollProps) 
 };
 
 const RoomManagement = () => {
-    const [RoomData, setRoomData] = useState<FloorRoom[]>(RoomDataTest)
-    // const groupedRooms = groupByFloor(RoomData);
-   
-    const [rooms, setRooms] = useState<FloorRoom[]>([]);
-    const groupedRooms = groupByFloor(rooms);
-
+    const [rooms, setRooms] = useState<RoomInterface[]>([]);
+  
     const fetchRooms = async () => {
         try {
             const res = await RoomService.getRooms();
-            console.log("res => ",res)
             const rooms = res.data.map((r: any) => ({
-                floor: r.floor,
-                room:{
-                    RoomName: r.room_number,
-                    RoomPrice: r.room_price,
-                    RoomStatus: r.room_status,
-                    RoomType: r.room_type
-                }
-               
+              id: r.id,
+              floor: r.floor,
+              RoomName: r.room_number,
+              RoomPrice: r.room_price,
+              RoomStatus: r.room_status,
+              RoomType: r.room_type
             }));
-            console.log('room ex',rooms)
             setRooms(rooms);
         } catch (err) {
             console.error(err);
         }
-        console.log("room data ",rooms)
     };
     
     useEffect(()=>{
         fetchRooms();
     },[])
-
-    useEffect(() => {
-        console.log("rooms updated -->", rooms);
-    }, [rooms]);
   
-    const addFloor = () =>{
-        const lastFloor = Math.max(...rooms.map(r => r.floor)) + 1;
-        const newRoom: FloorRoom = {floor: lastFloor, room: {RoomName: "name",RoomPrice:0, RoomType: "", RoomStatus: "",}
+    const addFloor = async () =>{
+      const lastFloor = Math.max(...rooms.map(r => r.floor)) + 1;
+      alert(lastFloor);
+      const r: RoomInterface = {floor: lastFloor, RoomName: randomCode(), RoomPrice:0, RoomType: "Single Room", RoomStatus: "maintenance",};
+      try{
+        const res = await RoomService.createRoom(
+          {
+            floor: r.floor,
+            room_number: r.RoomName,
+            room_price: r.RoomPrice,
+            room_type: r.RoomType,
+            room_status: r.RoomStatus,
+          }
+        );
+        if (res){
+          alert(res.data)
+          window.location.reload();
+        }
+
+      }catch(err){
+        console.error("❌ ERROR createRoom:", err);
+      }
         
-    };
-        alert("add successfully");
-        // setRoomData([...RoomData, newRoom]);
-        setRoomData((prev) => ([...prev, newRoom]))
-        console.log(RoomData)
     }
+
+    const groupedRooms = rooms.reduce<Record<number, RoomInterface[]>>((acc, room) => {
+      if (!acc[room.floor]) acc[room.floor] = [];
+      acc[room.floor].push(room);
+      return acc;
+    }, {});
 
   return (
     <div className="roomManagement_container" style={{ padding: 20 }}>
@@ -201,16 +241,12 @@ const RoomManagement = () => {
             เพิ่มชั้น
         </button>
       </div>
-
-      {Object.entries(groupedRooms).map(([floor, r]) => (
-        <FloorScroll
-          key={floor}
-          floor={parseInt(floor)}
-          rooms={r}
-          setRoomData = {setRoomData}
-          roomData = {rooms}
-        />
-      ))}
+      <div className='room-body'>
+        {Object.entries(groupedRooms).map(([floor, floorRooms]) => (
+          <FloorScroll key={floor} rooms={floorRooms} />
+        ))}
+            
+      </div>
     </div>
   );
 };

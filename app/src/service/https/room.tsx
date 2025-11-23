@@ -1,7 +1,7 @@
 
 import axios from "axios";
 
-const API_URL = "http://localhost:3000"; // เปลี่ยนตาม backend ของคุณ
+const API_URL = "http://localhost:3000"; 
 
 export const RoomService = {
 
@@ -25,19 +25,19 @@ export const RoomService = {
         }
     },
 
-    createRoom: async (floor:any, room_bumer:string, room_type:string, room_status:string) =>{
-        
+    createRoom: async (data:any) => {
         try{
-            const res = await axios.post(`${API_URL}/room/create`, {floor, room_bumer, room_type, room_status});
+            const res = await axios.post(`${API_URL}/room/create`, data);
             return {success:true, data: res.data};
         }catch (err:any){
-            return {success: false, error: err.response?.data || "failed" };
+            return {success:false, error: err.response?.data || "failed" };
         }
     },
-    updateRoomById: async (id:any, floor:any, room_bumer:string, room_type:string, room_status:string) =>{
+
+    updateRoomById: async (data:any) =>{
         
         try{
-            const res = await axios.post(`${API_URL}/room/update`, {id, floor, room_bumer, room_type, room_status});
+            const res = await axios.put(`${API_URL}/room/update`, data);
             return {success:true, data: res.data};
         }catch (err:any){
             return {success: false, error: err.response?.data || "failed" };
@@ -74,7 +74,7 @@ export const RoomTypeService = {
 
     getRoomType: async () => {
         try{
-            const res = await axios.get(`${API_URL}/roomType`)
+            const res = await axios.get(`${API_URL}/type`)
             return { success:true, data: res.data }
 
         }

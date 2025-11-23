@@ -14,10 +14,10 @@ class Status{
     }
     static async getAllStatus(){
         const db = await dbPromise;
-        return await db.all(`
-            SELECT * FROM status
-            `)
+        const resuft =  await db.all(`SELECT * FROM status `)
+        return resuft
     }
+
     static async fristCreate(){
         const db = await dbPromise;
 
@@ -77,11 +77,11 @@ class Room{
         await db.run(`
             CREATE TABLE IF NOT EXISTS rooms (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
-                floor INTEGER NOT NULL,
-                room_number TEXT NOT NULL UNIQUE,
+                floor INTEGER ,
+                room_number TEXT UNIQUE,
                 room_price FLOAT,
-                room_status_id INTEGER NOT NULL,
-                room_type_id INTEGER NOT NULL,
+                room_status_id INTEGER ,
+                room_type_id INTEGER ,
                 FOREIGN KEY (room_status_id) REFERENCES status(id),
                 FOREIGN KEY (room_type_id) REFERENCES room_types(id)
             )
@@ -171,7 +171,7 @@ class Room{
             throw new Error("Invalid room status or room type");
         }
         await db.run(
-            `UPDATE rooms SET floor = ? room_number = ?,room_price = ?, room_status_id = ?, room_type_id = ? WHERE id = ?`,
+            `UPDATE rooms SET floor = ?, room_number = ?,room_price = ?, room_status_id = ?, room_type_id = ? WHERE id = ?`,
             [floor, room_number, room_price, room_status_obj.id, room_type_obj.id, id]
         );
     }
@@ -200,5 +200,5 @@ class Room{
 export {
     Room,
     Status,
-    RoomType
+    RoomType,
 }
