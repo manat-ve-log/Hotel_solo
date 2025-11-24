@@ -1,0 +1,160 @@
+.booking-container{
+    width: 100%;
+    height: 100%;
+}
+
+.booking-header{
+    width: 100%;
+    height: 50px;
+    background: white;
+    border-radius: 5px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+}
+.header-viwe{
+    position: relative;
+    width: 120px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    border-radius: 2px;
+    background:white;
+    /* box-shadow: 1px 1px 2px rgba(0,0,0,0.1),-1px -1px 2px rgba(0,0,0,0.1); */
+    /* overflow: hidden; */
+}
+.buttom-date{
+    position: absolute;
+    width: 10px;
+    height: 100%;
+    /* background: whitesmoke; */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+}
+.buttom-date:hover{
+    cursor: pointer;
+    transform: scale(1.1);
+}
+.prev{
+    left: 0;
+    top: 0;
+    border-radius: 2px 0 0 2px;
+}
+.next{
+    right: 0;
+    top: 0;
+    border-radius: 0 2px  2px 0;
+}
+.booking-body{
+    width: 100%;
+    height: 100%;
+    background: gray;
+    padding: 10px;
+}
+/* -------------------------------------------daily---------------------------------------- */
+.booking-daily{
+    width: 100%;
+    height: 550px;
+    /* background: wheat; */
+}
+.booking-daily .date{
+    width: 100%;
+    height: 25px;
+    /* background: darkgrey; */
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    position: relative;
+   
+
+}
+.day{
+    position: relative;
+    cursor: pointer;
+    width: 25px;
+    height: 25px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.day p{
+    z-index: 1000;
+}
+.isday{
+    /* z-index: 20; */
+    border-radius: 50%;
+    background: rgba(255, 0, 0, 0.651);
+}
+.this-day{
+    position: absolute;
+    z-index: 100;
+    background: white;
+    width: 100%;
+    height: 140%;
+    border-radius: 5px  5px 0 0;
+    top: 0;
+    left: 0;
+
+}
+.booking-body-date{
+    position: relative;
+    width: 100%;
+    height: 92%;
+    z-index: 99999;
+    margin-top: 5px;
+    background: rgb(255, 255, 255);
+    /* background: red; */
+    border-radius: 5px;
+    overflow: hidden;
+    overflow-y: scroll;
+    scrollbar-width: none; 
+}
+&::-webkit-scrollbar {
+  display: none; 
+}
+.booking-card{
+    width: 100%;
+    height: 70px;
+    display: flex;
+    justify-content: flex-start;
+    background: red;
+    align-items: center;
+    margin-top: 3px;
+    gap: 3px;
+    overflow: hidden;
+    overflow-x: scroll;
+    scrollbar-width: none; 
+}
+.floor{
+    width: 10px;
+    height: 100%;
+    background-color: blueviolet;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-shrink: 0;
+    
+}
+.booking-card-room{
+    display: flex;
+    width: 100px;
+    height: 100%;
+    background-color: white;
+    flex-shrink: 0;
+    border-radius: 3px;
+    box-shadow: 2px 2px 2px rgba(0,0,0,0.6);
+}
+
+
+
+/* -------------------------------------------weekly---------------------------------------- */
+/* .booking-weekly{
+    width: 100%;
+    height: 30px;
+    background: rgb(240, 181, 73);
+} */
