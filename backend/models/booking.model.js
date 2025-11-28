@@ -104,19 +104,38 @@ class Booking{
         const totalDays = dayResult?.days || 0;
         const totalPrice = totalDays * price.room_price;
 
-        return await db.run(`
-            INSERT INTO bookings (booking_people, booking_check_in, booking_check_out, booking_total_price, booking_status, booking_room_id, booking_customer_id)
-            VALUES (?,?,?,?,?,?,?)
-            `,[
-                booking_people, 
-                booking_check_in, 
-                booking_check_out, 
-                totalPrice, 
-                booking_status,
-                booking_room_id, 
-                booking_customer_id
-            ])
+        const exist = await db.get(
+        `
+        SELECT 1
+        FROM bookings
+        WHERE booking_room_id = ?
+          AND ? <= booking_check_out
+          AND ? >= booking_check_in
+        `,
+        [booking_room_id, booking_check_in, booking_check_out]
+    );
+    if (exist) {
+        return { success: false, message: "ห้องนี้ถูกจองแล้ว" };
     }
+
+    await db.run(
+        `
+        INSERT INTO bookings 
+        (booking_people, booking_check_in, booking_check_out, booking_total_price, booking_status, booking_room_id, booking_customer_id)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+        `,
+        [
+            booking_people,
+            booking_check_in,
+            booking_check_out,
+            totalPrice,
+            booking_status,
+            booking_room_id,
+            booking_customer_id
+        ]
+    );
+    return { success: true, message: "จองสำเร็จ" };
+}
     
     static async updateBooking(id, booking_people, booking_check_in, booking_check_out, booking_total_price, booking_status, booking_room_id, booking_customer_id) {
         const db = await dbPromise;
@@ -142,6 +161,22 @@ class Booking{
         const db = await dbPromise;
         await db.run(`DELETE FROM bookings WHERE id = ?`, [id]);
         
+    }
+
+
+
+    static async getBookingWithRooms(){
+        const db = await dbPromise;
+        
+        const result = await db.all(`
+            SELECT *
+            FROM rooms AS r
+            LEFT JOIN bookings AS b
+            ON r.id = b.booking_room_id
+            ORDER BY r.floor
+        `);
+
+        return result;
     }
 
 }

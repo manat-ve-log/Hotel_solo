@@ -56,7 +56,7 @@ const bookingController = {
                 customer = await Customer.getCustomerByEmail(email);
             }
 
-            await Booking.createBooking(
+            const result = await Booking.createBooking(
                 booking_people,
                 booking_check_in,
                 booking_check_out,
@@ -64,8 +64,12 @@ const bookingController = {
                 room.id,
                 customer.id
             );
-
-            res.status(201).json({ message: "Booking created successfully" });
+            console.log("create result:", result);
+            if (result.success) {
+                return res.status(201).json(result);
+            } else {
+                return res.status(400).json(result);
+            }
 
         } catch (error) {
             console.error("Error creating booking:", error);
@@ -135,7 +139,23 @@ const bookingController = {
                 error: error.message
             });
         }
-    }
+    },
+
+    getBookingWithRooms:async (req,res) => {
+         try {
+            const bookings = await Booking.getBookingWithRooms()
+            if (!bookings) {
+                return res.status(404).json({ message: "Booking not found" });
+            }
+            res.status(200).json(bookings);
+        } catch (error) {
+            res.status(500).json({
+                message: "Error fetching booking",
+                error: error.message
+            });
+        }
+
+    },
 
 }
 

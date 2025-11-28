@@ -122,7 +122,7 @@
     height: 70px;
     display: flex;
     justify-content: flex-start;
-    background: red;
+    /* background: red; */
     align-items: center;
     margin-top: 3px;
     gap: 3px;
@@ -142,13 +142,42 @@
 }
 .booking-card-room{
     display: flex;
+    align-items: center;
+    justify-content: center;
     width: 100px;
     height: 100%;
     background-color: white;
     flex-shrink: 0;
     border-radius: 3px;
-    box-shadow: 2px 2px 2px rgba(0,0,0,0.6);
+    border:2px solid rgb(125,125,125,0.2)
+    /* box-shadow: 2px 2px 2px rgba(0,0,0,0.6); */
 }
+.booking-card-room:hover{
+    transform: scale(0.95);
+    cursor: pointer;
+}
+/* .card{
+    position: relative;
+} */
+
+.booking-overlay {
+  position: fixed;
+  inset: 0;              
+  background: rgba(0,0,0,0.1);
+  z-index: 9999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  pointer-events: auto;
+}
+
+.booking-form {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  z-index: 1000;
+}
+
 
 
 

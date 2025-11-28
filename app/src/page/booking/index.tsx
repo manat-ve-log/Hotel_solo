@@ -1,6 +1,10 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import './index.css'
 import dayjs from "dayjs";
+import { type RoomInterface } from '../roomManagement';
+import { RoomService } from '../../service/https/room';
+import BookingForm from './booking';
+
 
 interface BookingInterface{
     floor:number;
@@ -12,33 +16,8 @@ interface BookingInterface{
     room_type:string;
     customer_name:string;
     customer_phone:string;
+    customer_email?:string;
 }
-
-const bookingDatas: BookingInterface[] = [
-  { floor:1, room_number:"A101", room_price:1200, total_price:3600, start_date:"2025-11-20", end_date:"2025-11-23", room_type:"Standard", customer_name:"Somchai", customer_phone:"0811111111" },
-  { floor:1, room_number:"A102", room_price:1500, total_price:4500, start_date:"2025-11-21", end_date:"2025-11-24", room_type:"Deluxe", customer_name:"Suda", customer_phone:"0822222222" },
-  { floor:1, room_number:"B201", room_price:1800, total_price:5400, start_date:"2025-11-22", end_date:"2025-11-25", room_type:"VIP", customer_name:"Anan", customer_phone:"0833333333" },
-  { floor:1, room_number:"B202", room_price:1300, total_price:3900, start_date:"2025-11-19", end_date:"2025-11-22", room_type:"Standard", customer_name:"Warin", customer_phone:"0844444444" },
-  { floor:1, room_number:"C301", room_price:2000, total_price:6000, start_date:"2025-11-23", end_date:"2025-11-26", room_type:"Suite", customer_name:"Krit", customer_phone:"0855555555" },
-  { floor:1, room_number:"C302", room_price:2000, total_price:6000, start_date:"2025-11-23", end_date:"2025-11-26", room_type:"Suite", customer_name:"Krit", customer_phone:"0855555553" },
-  { floor:1, room_number:"C302", room_price:2000, total_price:6000, start_date:"2025-11-23", end_date:"2025-11-26", room_type:"Suite", customer_name:"Krit", customer_phone:"0855555553" },
-  { floor:1, room_number:"C302", room_price:2000, total_price:6000, start_date:"2025-11-23", end_date:"2025-11-26", room_type:"Suite", customer_name:"Krit", customer_phone:"0855555553" },
-  { floor:1, room_number:"C302", room_price:2000, total_price:6000, start_date:"2025-11-23", end_date:"2025-11-26", room_type:"Suite", customer_name:"Krit", customer_phone:"0855555553" },
-  { floor:1, room_number:"C302", room_price:2000, total_price:6000, start_date:"2025-11-23", end_date:"2025-11-26", room_type:"Suite", customer_name:"Krit", customer_phone:"0855555553" },
-  { floor:2, room_number:"C302", room_price:2000, total_price:6000, start_date:"2025-11-23", end_date:"2025-11-26", room_type:"Suite", customer_name:"Krit", customer_phone:"0855555553" },
-  { floor:2, room_number:"C302", room_price:2000, total_price:6000, start_date:"2025-11-23", end_date:"2025-11-26", room_type:"Suite", customer_name:"Krit", customer_phone:"0855555553" },
-  { floor:2, room_number:"C302", room_price:2000, total_price:6000, start_date:"2025-11-23", end_date:"2025-11-26", room_type:"Suite", customer_name:"Krit", customer_phone:"0855555553" },
-  { floor:2, room_number:"C302", room_price:2000, total_price:6000, start_date:"2025-11-23", end_date:"2025-11-26", room_type:"Suite", customer_name:"Krit", customer_phone:"0855555553" },
-  { floor:2, room_number:"C302", room_price:2000, total_price:6000, start_date:"2025-11-23", end_date:"2025-11-26", room_type:"Suite", customer_name:"Krit", customer_phone:"0855555553" },
-  { floor:2, room_number:"C302", room_price:2000, total_price:6000, start_date:"2025-11-23", end_date:"2025-11-26", room_type:"Suite", customer_name:"Krit", customer_phone:"0855555553" },
-  { floor:2, room_number:"C302", room_price:2000, total_price:6000, start_date:"2025-11-23", end_date:"2025-11-26", room_type:"Suite", customer_name:"Krit", customer_phone:"0855555553" },
-  { floor:2, room_number:"C302", room_price:2000, total_price:6000, start_date:"2025-11-23", end_date:"2025-11-26", room_type:"Suite", customer_name:"Krit", customer_phone:"0855555553" },
-  { floor:2, room_number:"C302", room_price:2000, total_price:6000, start_date:"2025-11-23", end_date:"2025-11-26", room_type:"Suite", customer_name:"Krit", customer_phone:"0855555553" },
-  { floor:2, room_number:"C302", room_price:2000, total_price:6000, start_date:"2025-11-23", end_date:"2025-11-26", room_type:"Suite", customer_name:"Krit", customer_phone:"0855555553" },
-  { floor:2, room_number:"C302", room_price:2000, total_price:6000, start_date:"2025-11-23", end_date:"2025-11-26", room_type:"Suite", customer_name:"Krit", customer_phone:"0855555553" },
-  { floor:2, room_number:"C302", room_price:2000, total_price:6000, start_date:"2025-11-23", end_date:"2025-11-26", room_type:"Suite", customer_name:"Krit", customer_phone:"0855555553" },
-  { floor:2, room_number:"C302", room_price:2000, total_price:6000, start_date:"2025-11-23", end_date:"2025-11-26", room_type:"Suite", customer_name:"Krit", customer_phone:"0855555553" },
-];
 
 
 function getDaysBetween(startDate:any, endDate:any) {
@@ -62,19 +41,42 @@ function getDaysBetween(startDate:any, endDate:any) {
 
 
 const BookingPage = () => {
+    const [rooms, setRooms] = useState<RoomInterface[]>([]);
     const [startMonth, setStartMonth] = useState(dayjs().startOf("month"));
     const [endMonth, setEndMonth] = useState(dayjs().endOf("month"));
     const { fullDays, months } = getDaysBetween(startMonth,endMonth);
     const [currenDate, setCurrenDate] = useState<string>(dayjs().format("YYYY-MM-DD"));
+    const [openForm, setOpenForm] = useState<boolean>(false);
+    const [sendRoomId, setSendRoomId] = useState<RoomInterface>();
+
+    const fetchRooms = async () =>{
+        try{
+            const res = await RoomService.getRooms();
+           const rooms = res.data.map((r: any) => ({
+              id: r.id,
+              floor: r.floor,
+              RoomName: r.room_number,
+              RoomPrice: r.room_price,
+              RoomStatus: r.room_status,
+              RoomType: r.room_type
+            }));
+            setRooms(rooms)
+        }catch(error){
+            console.log(error)
+        }
+    }
+    useEffect(()=>{
+        fetchRooms();
+    },[])
+
+    useEffect(()=>{
+        console.log("open form --> ",openForm)
+    },[openForm])
 
 
     const onNextPrev = (x:number) => {
         const nextMonth = dayjs(startMonth).add(1, "month");
         const prevMonth = dayjs(startMonth).subtract(1, "month");
-
-        console.log("next month--> ",nextMonth)
-        console.log("next month day --> ",fullDays)
-
          if (x > 0) {
             setStartMonth(nextMonth.startOf("month"));
             setEndMonth(nextMonth.endOf("month"));
@@ -84,10 +86,9 @@ const BookingPage = () => {
         }
     }   
 
-    const groupedRooms = bookingDatas.reduce<Record<number, BookingInterface[]>>((acc, room) => {
+    const groupedRooms = rooms.reduce<Record<number, RoomInterface[]>>((acc, room) => {
           if (!acc[room.floor]) acc[room.floor] = [];
           acc[room.floor].push(room);
-          console.log("grouedRooms --> ",acc)
           return acc;
     }, {});
 
@@ -134,19 +135,25 @@ const BookingPage = () => {
                     </div>
                     <div className='booking-body-date'
                     >
-                        {Object.entries(groupedRooms).map(([floor, rooms]) => (
+                        {Object.entries(groupedRooms).map(([floor, room]) => (
                             <div key={floor} className='booking-card' >
                                 <div className="floor">
                                     {floor}
                                 </div>
-                                {rooms.map((r)=>(
-                                    <div key={r.room_number} className='booking-card-room'>
-                                        <div className="card">
-                                            {r.room_number}
+                                {room.map((r)=>(
+                                    <div key={r.RoomName} className='booking-card-room' onClick={()=>{(setOpenForm(true)),setSendRoomId(r)}}>
+                                        <div className="card" >
+                                            {r.RoomName}
                                         </div>
                                     </div>
                                 ))}
-                                
+                                {openForm && sendRoomId && (
+                                    <div className="booking-overlay" onClick={() => setOpenForm(false)}>
+                                        <div className="booking-form" onClick={(e) => e.stopPropagation()}>
+                                        <BookingForm room={sendRoomId} setOpenForm={setOpenForm}/>
+                                        </div>
+                                    </div>
+                                )}
                             </div>
                             ))}
 

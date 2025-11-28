@@ -33,6 +33,7 @@ router.get('/booking/:id',bookingController.getBookingById);
 router.post('/booking/create',bookingController.createBooking);
 router.put('/booking/update',bookingController.updateBooking);
 router.delete('/booking/:id',bookingController.deleteBookingById);
+router.get('/bookingWithRoom',bookingController.getBookingWithRooms);
 
 // ----------------------------------- payment ----------------------------
 router.get('/payment', paymentController.getAllPayments);
